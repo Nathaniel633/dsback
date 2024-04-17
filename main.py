@@ -7,7 +7,8 @@ from flask.cli import AppGroup
 
 # import "packages" from "this" project
 from __init__ import app, db, cors  # Definitions initialization
-
+from flask_cors import CORS
+from __init__ import app, db, cors
 
 # setup APIs
 from api.covid import covid_api # Blueprint import api definition
@@ -16,11 +17,13 @@ from api.user import user_api # Blueprint import api definition
 from api.player import player_api
 from api.titanic import titanic_api
 from api.fitness import fitness_api
+from api.mental import mental_api
 # database migrations
 from model.users import initUsers
 from model.players import initPlayers
 from model.titanicML import initTitanic
 from model.fitnesses import initFitnessModel
+from model.journal import initMessages
 
 # setup App pages
 from projects.projects import app_projects # Blueprint directory import projects definition
@@ -61,6 +64,7 @@ def generate_data():
     initPlayers()
     initTitanic()
     initFitnessModel()
+    initMessages()
 
 # Register the custom command group with the Flask application
 app.cli.add_command(custom_cli)
