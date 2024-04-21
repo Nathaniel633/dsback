@@ -33,7 +33,7 @@ from projects.projects import app_projects # Blueprint directory import projects
 
 # Initialize the SQLAlchemy object to work with the Flask app instance
 db.init_app(app)
-
+CORS(app)
 # register URIs
 app.register_blueprint(joke_api) # register api routes
 app.register_blueprint(covid_api) # register api routes
@@ -76,4 +76,4 @@ app.cli.add_command(custom_cli)
 # this runs the application on the development server
 if __name__ == "__main__":
     # change name for testing
-    app.run(debug=True, host="127.0.0.1", port="4100")
+    app.run(debug=True, host="127.0.0.1", port="8080")
