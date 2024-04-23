@@ -18,7 +18,7 @@ from api.player import player_api
 from api.titanic import titanic_api
 from api.fitness import fitness_api
 #from api.mental import mental_api
-from api.sleep import sleep_api
+from api.fitness import sleep_api
 # database migrations
 from model.users import initUsers
 from model.players import initPlayers
