@@ -8,6 +8,7 @@ from random import randrange
 from datetime import date
 import os, base64
 import json
+import sqlite3
 
 from __init__ import app, db
 from sqlalchemy.exc import IntegrityError
@@ -59,6 +60,7 @@ class FitnessModel(db.Model):
         
         # Predict using the decision tree model
         calorie_pred_dt = cls.dt_model.predict(data_point)[0]
+        print(calorie_pred_dt)
 
         return calorie_pred_dt
 
