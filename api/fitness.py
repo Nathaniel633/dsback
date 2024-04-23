@@ -122,13 +122,17 @@ class FitnessPredict(Resource):
         """Endpoint to predict calorie burn based on exercise data."""
         # Get exercise data from the request
         exercise_data = request.json
+
+        # Check if the request body is missing
+        if exercise_data is None:
+            return jsonify({'error': 'No input data provided'}), 400
         
         # Get instance of FitnessModel
         fitness_model = FitnessModel.get_instance()
         
         # Predict calorie burn
         predicted_calories = fitness_model.predict(exercise_data)
-        
+
         # Return predicted calorie burn as JSON response
         return jsonify({'predicted_calories': predicted_calories})
 
