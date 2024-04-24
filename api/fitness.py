@@ -23,6 +23,7 @@ class FitnessPredict(Resource):
             # json_temp = jsonify({'error': 'Invalid input. Please provide all required fields.'}), 400
             
             return json.dumps({'error': 'Invalid input. Please provide all required fields.'}), 400, {'Content-Type': 'application/json'}
+        
 
         # Load data and train model (this should ideally be done during initialization)
         FitnessModel.load_data_from_csv('fitness.csv')
@@ -38,7 +39,8 @@ class FitnessPredict(Resource):
         # Return JSON response with predicted calories
         # return jsonify({'predicted_calories': str(predicted_calories)}), 200
         response_data = {'predicted_calories': str(predicted_calories)}
-        return json.dumps(response_data), 200, {'Content-Type': 'application/json'}
+        # return json.dumps(response_data), 200, {'Content-Type': 'application/json'}
+        return jsonify(response_data)
 
 api.add_resource(FitnessPredict, '/predict')
 

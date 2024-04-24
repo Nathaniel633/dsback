@@ -62,7 +62,7 @@ class FitnessModel(db.Model):
         calorie_pred_dt = cls.dt_model.predict(data_point)[0]
         print(calorie_pred_dt)
 
-        return calorie_pred_dt
+        return int(calorie_pred_dt)
 
     @classmethod
     def testFitnessModel(cls):
