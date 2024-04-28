@@ -12,37 +12,31 @@ CORS(fitness_api)
 
 class FitnessPredict(Resource):
     def post(self):
-        print("hi")
+        # Data Extraction
         data = request.get_json()
-        duration = data.get('Duration')
-        bpm = data.get('BPM')
-        intensity = data.get('Intensity')
-        print(data)
-
-        if duration is None or bpm is None or intensity is None:
-            # json_temp = jsonify({'error': 'Invalid input. Please provide all required fields.'}), 400
-            
+        steps = data.get('Steps')
+        stress = data.get('Stress')
+        meditation = data.get('Meditation')
+        # Data validation
+        if steps is None or stress is None or meditation is None:
             return json.dumps({'error': 'Invalid input. Please provide all required fields.'}), 400, {'Content-Type': 'application/json'}
-        
 
-        # Load data and train model (this should ideally be done during initialization)
+        # Load data and train model 
         FitnessModel.load_data_from_csv('fitness.csv')
         FitnessModel.train_model()
 
         try:
-            # Predict calories
-            predicted_calories = FitnessModel.predict_calories(duration, bpm, intensity)
-        except Exception as e:
-            # return jsonify({'error': str(e)}), 500  # Handle prediction error
+            # Predict produce
+            predicted_produce = FitnessModel.predict_produce(steps, stress, meditation)
+        except Exception as e: # Error statement if needed
             return json.dumps({'error': str(e)}), 500, {'Content-Type': 'application/json'}
 
-        # Return JSON response with predicted calories
-        # return jsonify({'predicted_calories': str(predicted_calories)}), 200
-        response_data = {'predicted_calories': str(predicted_calories)}
-        # return json.dumps(response_data), 200, {'Content-Type': 'application/json'}
+        # Return JSON response with predicted produce
+        response_data = {'predicted_produce': str(predicted_produce)}
         return jsonify(response_data)
 
 api.add_resource(FitnessPredict, '/predict')
+# Establish api endpoint url
 
 def init_fitness_model():
     FitnessModel.load_data_from_csv('fitness.csv')
