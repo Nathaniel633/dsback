@@ -1,3 +1,4 @@
+# this code was based on ChatGPT
 from flask import Flask, Blueprint, request, jsonify, render_template
 from flask_restful import Api, Resource, reqparse
 from flask_cors import CORS

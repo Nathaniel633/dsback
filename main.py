@@ -1,3 +1,4 @@
+#this was teacher-provided code
 import threading
 
 # import "packages" from flask
@@ -72,8 +73,9 @@ def generate_data():
 
 # Register the custom command group with the Flask application
 app.cli.add_command(custom_cli)
-        
+
 # this runs the application on the development server
 if __name__ == "__main__":
     # change name for testing
     app.run(debug=True, host="127.0.0.1", port="8080")
+    
