@@ -184,7 +184,51 @@ class Sleep(db.Model):
         db.session.commit()
         return None
 
+def init_sleep():
+    with app.app_context():
+        db.create_all()
+        sleeps_to_add = []
+        try:
+            with open(r'sleep.json', 'r') as json_file:
+                data = json.load(json_file)
+        except Exception:
+            print("Failed to read JSON file")
 
+        for item in data:
+            s_toadd = Sleep(
+                id=item['Person ID'],
+                gender=item['Gender'],
+                age=item['Age'],
+                occupation=item['Occupation'],
+                sleep_duration=item['Sleep Duration'],
+                quality_of_sleep=item['Quality of Sleep'],
+                physical_activity_level=item['Physical Activity Level'],
+                stress_level=item['Stress Level'],
+                bmi_category=item['BMI Category'],
+                blood_pressure=item['Blood Pressure'],
+                heart_rate=item['Heart Rate'],
+                daily_steps=item['Daily Steps'],
+                sleep_disorder=item['Sleep Disorder']
+            )
+            sleeps_to_add.append(s_toadd)
+
+        for s in sleeps_to_add:
+            try:
+                s.create()
+            except IntegrityError:
+                db.session.remove()
+                print(f"Records exist, duplicate entry, or error: {sleep}")
+
+@app.route('/api/sleeps', methods=['GET'])
+def get_sleeps():
+    sleep_duration = request.args.get('sleep_duration')
+    if sleep_duration is not None:
+        sleeps = Sleep.query.filter_by(_sleep_duration=float(sleep_duration)).all()
+    else:
+        sleeps = Sleep.query.all()
+    
+    sleep_list = [{'id': sleep.id, 'duration': sleep.sleep_duration} for sleep in sleeps]
+    return jsonify(sleep_list)
 
 if __name__ == '__main__':
     app.run(debug=True)

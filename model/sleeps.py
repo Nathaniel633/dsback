@@ -151,15 +151,6 @@ class Sleep(db.Model):
     def __str__(self):
         return json.dumps(self.read())
     
-    def create(self):
-        try:
-            # creates a drink object from Drink(db.Model) class, passes initializers
-            db.session.add(self)  # add prepares to persist drink object to drinks table
-            db.session.commit()  # SqlAlchemy "unit of work pattern" requires a manual commit
-            return self
-        except IntegrityError:
-            db.session.remove()
-            return None
 
     def read(self):
         return {
@@ -178,18 +169,6 @@ class Sleep(db.Model):
             "sleep_disorder": self.sleep_disorder
         }
 
-
-    def update(self, **kwargs):
-        for attr, value in kwargs.items():
-            if value and hasattr(self, attr):
-                setattr(self, attr, value)
-        db.session.commit()
-        return self
-
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
-        return None
 
 
 
