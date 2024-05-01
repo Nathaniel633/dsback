@@ -3,9 +3,9 @@ from sklearn.model_selection import train_test_split
 import pandas as pd
 from __init__ import app, db
 
-class FitnessModel(db.Model):
+class FoodModel(db.Model):
     # establish schema in SQlite database
-    __tablename__ = 'fitness_data'
+    __tablename__ = 'food_data'
     id = db.Column(db.Integer, primary_key=True)
     steps = db.Column(db.Integer, nullable=False)  
     stress = db.Column(db.Integer, nullable=False)  
@@ -21,8 +21,8 @@ class FitnessModel(db.Model):
     @classmethod
     # Iterate through the .csv and append to the database
     def load_data_from_csv(cls, csv_file):
-        fitness_data = pd.read_csv(csv_file)
-        for _, row in fitness_data.iterrows():
+        food_data = pd.read_csv(csv_file)
+        for _, row in food_data.iterrows():
             new_entry = cls(
                 steps=row['Steps'],  
                 stress=row['Stress'],  
@@ -55,8 +55,8 @@ class FitnessModel(db.Model):
 
         return int(produce_pred_dt)
 
-def initFitnessModel():
+def initFoodModel():
     with db.engine.connect() as connection:
-        FitnessModel.__table__.create(bind=connection, checkfirst=True)  # Create table if not exists
-        FitnessModel.load_data_from_csv('fitness.csv')
-        FitnessModel.train_model()
+        FoodModel.__table__.create(bind=connection, checkfirst=True)  # Create table if not exists
+        FoodModel.load_data_from_csv('food.csv')
+        FoodModel.train_model()
