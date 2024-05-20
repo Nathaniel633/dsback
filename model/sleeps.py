@@ -1,4 +1,3 @@
-# this code was based on ChatGPT
 from random import randrange
 from datetime import date
 import os, base64
@@ -7,6 +6,7 @@ import json
 from __init__ import app, db
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask import request, jsonify
 
 # Define the Sleep class to represent the 'sleep' table in the database
 class Sleep(db.Model):
@@ -25,8 +25,6 @@ class Sleep(db.Model):
     _heart_rate = db.Column(db.Integer, nullable=False)
     _daily_steps = db.Column(db.Integer, nullable=False)
     _sleep_disorder = db.Column(db.String(100), nullable=True)  # Assuming it can be NULL
-
-
 
     def __init__(self, id, gender, age, occupation, sleep_duration, quality_of_sleep, physical_activity_level, stress_level, bmi_category, blood_pressure, heart_rate, daily_steps, sleep_disorder):
         self._id = id
@@ -171,9 +169,7 @@ class Sleep(db.Model):
         }
 
 
-
-
-# Initialize the sleep table with data from the CSV file
+# Initialize the sleep table with data from the JSON file
 def init_sleep():
     with app.app_context():
         """Create database and tables"""
@@ -181,7 +177,6 @@ def init_sleep():
         """Tester data for table"""
         #s1 = Sleep(_id=1, _gender='Male', _age=27, _occupation='Software Engineer', _sleep_duration=6.1, _quality_of_sleep=6, _physical_activity_level=42, _stress_level=6, _bmi_category='Overweight', _blood_pressure='126/83', _heart_rate=77, _daily_steps=4200, _sleep_disorder=None)
         #s2 = Sleep(_id=2, _gender='Male', _age=28, _occupation='Doctor', _sleep_duration=6.2, _quality_of_sleep=6, _physical_activity_level=60, _stress_level=8, _bmi_category='Normal', _blood_pressure='125/80', _heart_rate=75, _daily_steps=10000, _sleep_disorder=None)
-
 
     # List to store Sleep objects
     # Initialize an empty list to store Sleep objects
@@ -216,13 +211,12 @@ def init_sleep():
         # Adding the Sleep objects to the database
         for s in sleeps_to_add:
             try:
-                s.create()
+                db.session.add(s)
+                db.session.commit()
             except IntegrityError:
                 '''fails with bad or duplicate data'''
-                db.session.remove()
-                print(f"Records exist, duplicate entry, or error: {sleep}")
-
-
+                db.session.rollback()
+                print(f"Records exist, duplicate entry, or error: {s}")
 
 @app.route('/api/sleeps', methods=['GET'])
 def get_sleeps():
@@ -242,9 +236,17 @@ def get_sleeps():
     # Return JSON response
     return jsonify(sleep_list)
 
+@app.route('/api/sleeps/hours/<float:hours>', methods=['GET'])
+def get_sleeps_by_hours(hours):
+    # Query the database for sleep records with the specified duration
+    sleeps = Sleep.query.filter_by(_sleep_duration=hours).all()
 
+    # Convert queried sleep records to JSON format
+    sleep_list = [sleep.read() for sleep in sleeps]
+    
+    # Return JSON response
+    return jsonify(sleep_list)
 
 # Run the Flask app
 if __name__ == '__main__':
     app.run(debug=True)
-            

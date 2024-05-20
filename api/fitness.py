@@ -1,11 +1,9 @@
-# this code was based on ChatGPT
 from flask import Flask, Blueprint, request, jsonify, render_template
 from flask_restful import Api, Resource, reqparse
 from flask_cors import CORS
 from model.sleeps import Sleep
 from model.fitnesses import FitnessModel
 from sqlalchemy.exc import SQLAlchemyError, OperationalError
-
 
 # Initialize the Flask app instance
 app = Flask(__name__)
@@ -57,8 +55,37 @@ class SleepCRUD(Resource):
         except Exception as error:
             return jsonify({'error': f'An unexpected error occurred: {str(error)}'}), 500
 
-# Add SleepCRUD resource to sleep API
+class SleepByHours(Resource):
+    def get(self, hours):
+        try:
+            # Query sleep records by sleep duration from the database
+            sleeps = Sleep.query.filter_by(_sleep_duration=float(hours)).all()
+            
+            # Convert the sleep records to JSON-ready format using the `read` method
+            json_ready = [sleep.read() for sleep in sleeps]
+            
+            # Return the JSON response containing the list of sleep records
+            return jsonify(json_ready)
+        
+        # Handle database connection errors
+        except OperationalError as db_error:
+            return jsonify({'error': f'Database connection error: {str(db_error)}'}), 500
+        
+        # Handle query execution errors (e.g., syntax or data access issues)
+        except SQLAlchemyError as query_error:
+            return jsonify({'error': f'Query error: {str(query_error)}'}), 500
+        
+        # Handle data format errors (e.g., JSON conversion issues)
+        except json.JSONDecodeError as json_error:
+            return jsonify({'error': f'Data format error: {str(json_error)}'}), 400
+        
+        # Handle any other unexpected errors
+        except Exception as error:
+            return jsonify({'error': f'An unexpected error occurred: {str(error)}'}), 500
+
+# Add SleepCRUD and SleepByHours resources to sleep API
 api_sleep.add_resource(SleepCRUD, '/')
+api_sleep.add_resource(SleepByHours, '/hours/<float:hours>')
 
 # Fitness API Resource class
 class FitnessPredict(Resource):
