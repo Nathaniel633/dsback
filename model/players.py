@@ -141,10 +141,10 @@ def initPlayers():
         db.create_all()
         """Tester records for table"""
         players = [
-            Player(name='Azeem Khan', uid='azeemK', tokens=45),
-            Player(name='Ahad Biabani', uid='ahadB', tokens=41),
-            Player(name='Akshat Parikh', uid='akshatP', tokens=40),
-            Player(name='Josh Williams', uid='joshW', tokens=38),
+            Player(name='Nathan Obodovski', uid='nathano', tokens=45),
+            Player(name='Grayson Guyot', uid='delta', tokens=41),
+            Player(name='Ellie Rozenkranz', uid='ellier', tokens=40),
+            Player(name='Arushi Pandley', uid='sushi', tokens=38),
             Player(name='John Mortensen', uid='johnM', tokens=35)
         ]
 

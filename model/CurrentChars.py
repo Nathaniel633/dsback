@@ -3,7 +3,6 @@ from random import randrange
 from datetime import date
 import os, base64
 import json
-
 from __init__ import app, db
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -176,7 +175,6 @@ class CurrentChar(db.Model):
             # "posts": [post.read() for post in self.posts]
         }
         
-
     # CRUD update: updates user name, password, phone
     # returns self
     def update(self, classname="", health=None, attack=None, range=None, movement=None):
@@ -207,7 +205,7 @@ def initCurrentChars():
         """Create database and tables"""
         db.create_all()
         """Tester data for table"""
-        u1 = CurrentChar(classname='', health=None, attack=None, range=None, movement=None)
+        u1 = CurrentChar(classname='Knight', health=2, attack=2, range=2, movement=1)
 
         CurrentCharacter = [u1]
 

@@ -3,7 +3,7 @@ from flask import Blueprint, request, jsonify, current_app, Response
 from flask_restful import Api, Resource # used for REST API building
 from datetime import datetime
 from auth_middleware import token_required
-
+from __init__ import app, db
 from model.CurrentChars import CurrentChar
 
 currentchar_api = Blueprint('currentchar_api', __name__,
@@ -12,65 +12,48 @@ currentchar_api = Blueprint('currentchar_api', __name__,
 # API docs https://flask-restful.readthedocs.io/en/latest/api.html
 api = Api(currentchar_api)
 
+from flask import request, jsonify
+from model.CurrentChars import CurrentChar
+
 class CurrentCharAPI:        
-    class _CRUD(Resource):  # User API operation for Create, Read.  THe Update, Delete methods need to be implemeented
-        # @token_required
-        def post(self): # Create method
-            ''' Read data for json body '''
-            body = request.get_json()
+    class _CRUD(Resource):
+        def post(self):
+            body = request.get_json()  # Get the body of the request
             
-            ''' Avoid garbage in, error checking '''
-            # validate name
-            classname = body.get('classname')
-            if classname is None or len(classname) < 2:
-                return {'message': f'Name is missing, or is less than 2 characters'}, 400
-            health = body.get('health')
-            # if health is None or len(health) < 2:
-            #     return {'message': f'Name is missing, or is less than 2 characters'}, 400
-            attack = body.get('attack')
-            # if attack is None or len(attack) < 2:
-            #     return {'message': f'Name is missing, or is less than 2 characters'}, 400
-            range = body.get('range')
-            # if range is None or len(range) < 2:
-            #     return {'message': f'Name is missing, or is less than 2 characters'}, 400
-            movement = body.get('movement')
-            # if movement is None or len(movement) < 2:
-            #     return {'message': f'Name is missing, or is less than 2 characters'}, 400
+            # Extracting data from the JSON body
+            id = body.get('id')
+            classname = body.get('classname', None)
+            health = body.get('health', None)
+            attack = body.get('attack', None)
+            range = body.get('range', None)
+            movement = body.get('movement', None)
+            
+            # Find the existing character by ID
+            char = CurrentChar.query.filter_by(id=id).first()
+            
+            # If the character does not exist, return an error
+            if not char:
+                return jsonify({'message': 'Character not found'}), 404
+            
+            # Updating fields only if they are provided in the request
+            if classname:
+                char.classname = classname
+            if health is not None:
+                char.health = health
+            if attack is not None:
+                char.attack = attack
+            if range is not None:
+                char.range = range
+            if movement is not None:
+                char.movement = movement
+            
+            try:
+                db.session.commit()  # Commit changes to the database
+                return jsonify(char.read()), 200  # Return the updated character information
+            except Exception as e:
+                db.session.rollback()  # Rollback in case of error
+                return jsonify({'message': 'Failed to update character', 'error': str(e)}), 500
 
-            ''' #1: Key code block, setup USER OBJECT '''
-            co = CurrentChar(classname=classname,
-                             health=health,
-                             attack=attack,
-                             range=str(range).lower()=="true",
-                             movement=str(movement).lower()=="true")
-        
-            ''' #2: Key Code block to add user to database '''
-            # create user in database
-            CharClass = co.create()
-            # success returns json of user
-            if CharClass:
-                return jsonify(CharClass.read())
-
-        # @token_required
-        def get(self): # Read Method
-            CurrentCharacter = CurrentChar.query.all()    # read/extract all users from database
-            json_ready = [CurrentCharacter.read() for CurrentCharacter in CurrentCharacter]  # prepare output in json
-            return jsonify(json_ready)  # jsonify creates Flask response object, more specific to APIs than json.dumps
-
-        def put(self):
-            body = request.get_json() # get the body of the request
-            classname = body.get('classname')
-            health = body.get('health') # get the UID (Know what to reference)
-            attack = body.get('attack') # get name (to change)
-            range = body.get('range') # get name (to change)
-            movement = body.get('movement') # get name (to change)
-            CurrentCharacter = CurrentChar.query.all() # get users
-            # for CurrentCharacter in CurrentCharacter:
-                # if CurrentCharacter.classname == classname: # find user with matching uid
-            # check length of current character todo
-            CurrentCharacter[0].update(classname,health,attack,range==True,movement==True) # update info
-            return f"{CurrentCharacter[0].read()} Updated"
-    
     # class _Security(Resource):
     #     def post(self):
     #         try:
