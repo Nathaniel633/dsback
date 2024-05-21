@@ -54,6 +54,18 @@ class FoodModel(db.Model):
         produce_pred_dt = cls.dt_model.predict(data_point)[0]
 
         return int(produce_pred_dt)
+    def serialize(self):
+        return {
+            'id': self.id,
+            'steps': self.steps,
+            'stress': self.stress,
+            'meditation': self.meditation,
+            'produce': self.produce
+        }
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+        return None
 
 def initFoodModel():
     with db.engine.connect() as connection:
