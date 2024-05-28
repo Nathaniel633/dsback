@@ -189,7 +189,7 @@ def init_sleep():
         except Exception as error:
             print("Failed to read JSON file:")
 
-        # Loop through each entry in the JSON data and create Sleep objects
+        # Loop through each entry in the JSON data and create Sleep objects - conventional loop
         for item in data:
             s_toadd = Sleep(
                 id=item['Person ID'],
@@ -219,8 +219,9 @@ def init_sleep():
                 print(f"Records exist, duplicate entry, or error: {s}")
 
 @app.route('/api/sleeps', methods=['GET'])
+# Loops (Algorithmic) - Building a List using List Comprehension: uses list comprehension to convert queried sleep records to JSON format 
 def get_sleeps():
-    # Extract query parameter for filtering (sleep_duration)
+    # Extract query parameter for filtering (sleep_duration) - sorting and searching through SQLAlchemy
     sleep_duration = request.args.get('sleep_duration')
 
     # Query the database for sleep records with the specified duration
