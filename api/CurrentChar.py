@@ -53,6 +53,35 @@ class CurrentCharAPI:
             except Exception as e:
                 db.session.rollback()  # Rollback in case of error
                 return jsonify({'message': 'Failed to update character', 'error': str(e)}), 500
+            
+        # @token_required
+        def get(self): # Read Method
+            CurrentCharacter = CurrentChar.query.all()    # read/extract all users from database
+            json_ready = [CurrentCharacter.read() for CurrentCharacter in CurrentCharacter]  # prepare output in json
+            return jsonify(json_ready)  # jsonify creates Flask response object, more specific to APIs than json.dumps
+
+        def put(self):
+            body = request.get_json() # get the body of the request
+            classname = body.get('classname')
+            print(classname)
+            health = body.get('health') # get the UID (Know what to reference)
+            attack = body.get('attack') # get name (to change)
+            range = body.get('range') # get name (to change)
+            movement = body.get('movement') # get name (to change)
+            # print(body)
+            CurrentCharacter = CurrentChar.query.all() # get users
+            print(CurrentCharacter)
+            # for character in CurrentCharacter:
+                # if character.classname == classname: # find user with matching uid
+            # check length of current character todo
+            
+            if len(CurrentCharacter) < 1:
+                print("Length of CurrentChars list from db is empty; no characters in database")
+                return f"char of {classname} created; no Characters updated because none were found"
+            else:
+                CurrentCharacter[0].update(classname, health, attack, range==True, movement==True) # update info
+                return f"char of {classname} created; {CurrentCharacter[0].read()} Updated"
+
 
     # class _Security(Resource):
     #     def post(self):

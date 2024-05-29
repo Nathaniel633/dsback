@@ -17,6 +17,7 @@ from api.player import player_api
 from api.titanic import titanic_api
 from api.fitness import fitness_api
 from api.CurrentChar import currentchar_api
+from api.CharClass import classes_api
 
 # database migrations
 from model.users import initUsers
@@ -24,6 +25,7 @@ from model.players import initPlayers
 from model.titanicML import initTitanic
 from model.fitnesses import initFitnessModel
 from model.CurrentChars import initCurrentChars
+from model.classes import initCharClasses
 
 # setup App pages
 from projects.projects import app_projects # Blueprint directory import projects definition
@@ -41,6 +43,7 @@ app.register_blueprint(titanic_api) # register api routes
 app.register_blueprint(app_projects) # register app pages
 app.register_blueprint(fitness_api)
 app.register_blueprint(currentchar_api)
+app.register_blueprint(classes_api)
 
 @app.errorhandler(404)  # catch for URL not found
 def page_not_found(e):
@@ -66,6 +69,7 @@ def generate_data():
     initTitanic()
     initFitnessModel()
     initCurrentChars()
+    initCharClasses()
 # Register the custom command group with the Flask application
 app.cli.add_command(custom_cli)
         
